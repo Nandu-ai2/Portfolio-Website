@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cl.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: inherit;
+        }
+
+        .container, aside, main, .content {
+            background-color: inherit;
+        }
+
+        .color-option {
+            width: 25px;
+            height: 25px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-toggler {
+            position: fixed;
+            right: 20px;
+            top: 70px;
+            height: 40px;
+            width: 40px;
+            background: var(--bg-black-100);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggler:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggler i {
+            font-size: 20px;
+            color: var(--skin-color);
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggler .fa-sun {
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-toggler .fa-sun {
+            opacity: 1;
+        }
+
+        [data-theme="dark"] .theme-toggler .fa-moon {
+            opacity: 0;
+        }
+
+        @media (max-width: 767px) {
+            .theme-toggler {
+                right: 15px;
+                top: 65px;
+            }
+        }
+
+        /* Light Theme Colors */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f2f2fc;
+            --text-primary: #302e4d;
+            --text-secondary: #504e70;
+            --border-color: #e8dfec;
+            --shadow-color: rgba(48, 46, 77, 0.15);
+            --bg-black-900: #f2f2fc;
+            --bg-black-100: #fdf9ff;
+            --bg-black-50: #e8dfec;
+            --text-black-900: #302e4d;
+            --text-black-700: #504e70;
+        }
+
+        /* Dark Theme Colors */
+        [data-theme="dark"] {
+            --bg-primary: #151515;
+            --bg-secondary: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #e9e9e9;
+            --border-color: #393939;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --bg-black-900: #151515;
+            --bg-black-100: #222222;
+            --bg-black-50: #393939;
+            --text-black-900: #ffffff;
+            --text-black-700: #e9e9e9;
+        }
+
+        /* Apply background colors */
+        body {
+            background-color: var(--bg-secondary);
+        }
+
+        .aside {
+            background-color: var(--bg-primary);
+        }
+
+        .section {
+            background-color: var(--bg-secondary);
+        }
+
+        .contact .contact-form .form-item .form-control {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .portfolio .portfolio-item-inner {
+            background-color: var(--bg-primary);
+        }
+
+        .service .service-item-inner {
+            background-color: var(--bg-primary);
+        }
+
+        /* Text colors */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-primary);
+        }
+
+        p, span, li {
+            color: var(--text-secondary);
+        }
+
+        /* Smooth transitions */
+        body, .aside, .section, .contact-form .form-control,
+        .portfolio .portfolio-item-inner, .service .service-item-inner,
+        h1, h2, h3, h4, h5, h6, p, span, li {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Color Theme -->
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; align-items: center; gap: 10px;">
+        <div id="colorPanel" style="display: none; background: white; padding: 8px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+            <div style="display: flex; gap: 8px;">
+                <button onclick="setColor('#3498db')" class="color-option" style="background: #3498db;"></button>
+                <button onclick="setColor('#2ecc71')" class="color-option" style="background: #2ecc71;"></button>
+                <button onclick="setColor('#9b59b6')" class="color-option" style="background: #9b59b6;"></button>
+                <button onclick="setColor('#e74c3c')" class="color-option" style="background: #e74c3c;"></button>
+                <button onclick="setColor('#f1c40f')" class="color-option" style="background: #f1c40f;"></button>
+                <button onclick="setColor('#1abc9c')" class="color-option" style="background: #1abc9c;"></button>
+            </div>
+        </div>
+        <button id="gear" onclick="toggleColors()" style="width: 35px; height: 35px; border: none; border-radius: 50%; background: white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+    
+    <!-- Theme Toggler Start -->
+    <div class="theme-toggler">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </div>
+    <!-- Theme Toggler End -->
+
+    <script>
+        // Theme handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggler = document.querySelector("#themeToggler");
+            const body = document.body;
+            const icon = themeToggler.querySelector("i");
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.setAttribute('data-theme', savedTheme);
+                icon.className = savedTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+            }
+            
+            // Toggle theme
+            themeToggler.addEventListener('click', () => {
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                body.setAttribute('data-theme', newTheme);
+                icon.className = newTheme === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o';
+                localStorage.setItem('theme', newTheme);
+            });
+
+            // Navigation handling
+            const navToggler = document.querySelector(".nav-toggler");
+            const aside = document.querySelector(".aside");
+            const mainContent = document.querySelector(".main-content");
+            const navLinks = document.querySelectorAll(".aside .nav li a");
+            
+            // Toggle sidebar when clicking the nav-toggler
+            navToggler.addEventListener('click', (e) => {
+                e.stopPropagation();
+                aside.classList.toggle('open');
+                mainContent.classList.toggle('open');
+                navToggler.classList.toggle('open');
+            });
+            
+            // Handle navigation item clicks
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (window.innerWidth <= 1199) {
+                        aside.classList.remove('open');
+                        mainContent.classList.remove('open');
+                        navToggler.classList.remove('open');
+                    }
+                });
+            });
+            
+            // Close sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!aside.contains(e.target) && !navToggler.contains(e.target)) {
+                    aside.classList.remove('open');
+                    mainContent.classList.remove('open');
+                    navToggler.classList.remove('open');
+                }
+            });
+            
+            // Prevent clicks inside the sidebar from closing it
+            aside.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Set active link based on current hash
+            function setActiveLink() {
+                const hash = window.location.hash || '#home';
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            // Set initial active link
+            setActiveLink();
+
+            // Update active link when hash changes
+            window.addEventListener('hashchange', setActiveLink);
+        });
+    </script>
+
+    <script>
+        // Theme Toggler
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggler = document.querySelector('.theme-toggler');
+            
+            // Define colors for light and dark modes
+            const themes = {
+                light: '#ffffff',
+                dark: '#2b2b2b'
+            };
+            
+            themeToggler.addEventListener('click', function() {
+                let currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                let newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                // Set theme attribute
+                document.documentElement.setAttribute('data-theme', newTheme);
+                
+                // Apply the background color using the existing setColor function
+                setColor(themes[newTheme]);
+                
+                // Store theme preference
+                localStorage.setItem('theme', newTheme);
+            });
+            
+            // Apply initial theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            setColor(themes[savedTheme]);
+        });
+
+        function toggleColors() {
+            const panel = document.getElementById('colorPanel');
+            const gear = document.getElementById('gear');
+            const isHidden = panel.style.display === 'none';
+            
+            panel.style.display = isHidden ? 'flex' : 'none';
+            gear.style.transform = isHidden ? 'rotate(90deg)' : '';
+            gear.style.transition = 'transform 0.3s';
+        }
+
+        function getContrastColor(hexcolor) {
+            // Convert hex to RGB
+            const r = parseInt(hexcolor.slice(1,3), 16);
+            const g = parseInt(hexcolor.slice(3,5), 16);
+            const b = parseInt(hexcolor.slice(5,7), 16);
+            
+            // Calculate luminance
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            
+            // Return black or white based on luminance
+            return luminance > 0.5 ? '#000000' : '#ffffff';
+        }
+
+        function setColor(color) {
+            // Set the background color for the entire page
+            document.body.style.backgroundColor = color;
+            document.documentElement.style.backgroundColor = color;
+            
+            // Calculate contrasting text color
+            const textColor = getContrastColor(color);
+            
+            // Apply the background color to all sections and elements
+            document.querySelectorAll('.section, .aside, .contact .contact-form .form-item .form-control, .portfolio .portfolio-item-inner, .service .service-item-inner').forEach(element => {
+                element.style.backgroundColor = color;
+            });
+            
+            // Apply text color to all text elements
+            document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, li, .contact .contact-form .form-item .form-control').forEach(element => {
+                element.style.color = textColor;
+            });
+            
+            // Update border colors
+            document.querySelectorAll('.aside, .contact .contact-form .form-item .form-control').forEach(element => {
+                element.style.borderColor = textColor + '22'; // Add transparency to border
+            });
+        }
+    </script>
+
+    <!-- Aside Start -->
+    <div class="aside">
+        <div class="logo">
+            <a href="#"><span>My</span>Portfolio</a>
+        </div>
+        <ul class="nav">
+            <li><a href="#home" class="active"><i class="fa fa-home"></i>Home</a></li>
+            <li><a href="#about"><i class="fa fa-user"></i>About</a></li>
+            <li><a href="#projects"><i class="fa fa-list"></i>Projects</a></li>
+            <li><a href="#portfolio"><i class="fa fa-briefcase"></i>Portfolio</a></li>
+            <li><a href="#contact"><i class="fa fa-comments"></i>Contact</a></li>
+        </ul>
+    </div>
+    <button class="nav-toggler">
+        <span></span>
+    </button>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggler = document.querySelector(".nav-toggler");
+            const aside = document.querySelector(".aside");
+            const mainContent = document.querySelector(".main-content");
+            const navLinks = document.querySelectorAll(".aside .nav li a");
+            
+            // Toggle sidebar when clicking the nav-toggler
+            navToggler.addEventListener('click', (e) => {
+                e.stopPropagation();
+                aside.classList.toggle('open');
+                mainContent.classList.toggle('open');
+                navToggler.classList.toggle('open');
+            });
+            
+            // Handle navigation item clicks
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Remove active class from all links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // On mobile, close the sidebar after clicking a link
+                    if (window.innerWidth <= 1199) {
+                        aside.classList.remove('open');
+                        mainContent.classList.remove('open');
+                        navToggler.classList.remove('open');
+                    }
+                });
+            });
+            
+            // Close sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!aside.contains(e.target) && !navToggler.contains(e.target)) {
+                    aside.classList.remove('open');
+                    mainContent.classList.remove('open');
+                    navToggler.classList.remove('open');
+                }
+            });
+            
+            // Prevent clicks inside the sidebar from closing it
+            aside.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Set active link based on current hash
+            function setActiveLink() {
+                const hash = window.location.hash || '#home';
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            // Set initial active link
+            setActiveLink();
+
+            // Update active link when hash changes
+            window.addEventListener('hashchange', setActiveLink);
+        });
+    </script>
+    <!-- Aside End -->
+    
+
+    <!-- Main Content Start -->
+    <div class="main-content">
+        <!-- Home Section Start -->
+        <section class="home section active" id="home">
+            <div class="container">
+                <div class="row">
+                    <div class="home-info padd-15">
+                        <h3 class="hello">Hello, my name is <span class="name">K.R.S.S Manikanta</span></h3>
+                        <h3 class="profession">I'm a Data Science Enthusiast <span class="typing"></span></h3>
+                        <p>A data science student analyzes data, develops predictive models, and communicates insights using programming and machine learning.</p>
+                        <a href="#" class="btn">Hire Me</a>
+                    </div>
+                    <div class="home-img padd-15">
+                        <img src="photos\Mine.jpg" alt="Your Image">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Home Section End -->
+
+        <!-- About Section Start -->
+        <section class="about section active" id="about">
+            <div class="container">
+                <div class="row">
+                    <div class="section-title padd-15">
+                        <h2>About Me</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="about-content padd-15">
+                        <div class="row">
+                            <div class="about-text padd-15">
+                                <h3>I'm K.R.S.S Manikanta and I'm a <span>Data Science Student</span></h3>
+                                <p>Data Science Enthusiast | B.Tech Student at Malla Reddy University | 1-Month Internship Experience at YBI Foundation | Moderate in Python, SQL,R & Machine Learning.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="personal-info padd-15">
+                                <div class="row">
+                                    <div class="info-item padd-15">
+                                        <p>Birthday : <span>15 October 2004</span></p>
+                                    </div>
+                                    <div class="info-item padd-15">
+                                        <p>Age : <span>20</span></p>
+                                    </div>
+                                    <div class="info-item padd-15">
+                                        <p>Website : <span style="font-size:x-small;padding-left: -8px;">www.example.com</span></p>
+                                    </div>
+                                    <div class="info-item padd-15">
+                                        <p>Email : <span style="font-size:x-small;padding-left: -4px;">kesireddynandu004@gmail.com</span></p>
+                                    </div>
+                                    <div class="info-item padd-15">
+                                        <p>Degree : <span>Bachelors</span></p>
+                                    </div>
+                                    <div class="info-item padd-15">
+                                        <p>Phone : <span>+91 6303666259</span></p>
+                                    </div>
+                                    <div class="info-item padd-15">
+                                        <p>City : <span>Hyderabad</span></p>
+                                    </div>
+                                    <div class="info-item padd-15">
+                                        <p>Skills : <span>Power BI , Python , SQL </span></p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="buttons padd-15">
+                                        <a href="#contact" class="btn">Hire Me</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="skills padd-15">
+                                <div class="row">
+                                    <div class="skills-item padd-15">
+                                        <h5>HTML</h5>
+                                        <div class="progress">
+                                            <div class="progress-in" style="width:80%;"></div>
+                                            <div class="skill-percent">80%</div>
+                                        </div>
+                                    </div>
+                                    <div class="skills-item padd-15">
+                                        <h5>CSS</h5>
+                                        <div class="progress">
+                                            <div class="progress-in" style="width:70%;"></div>
+                                            <div class="skill-percent">70%</div>
+                                        </div>
+                                    </div>
+                                    <div class="skills-item padd-15">
+                                        <h5>JavaScript</h5>
+                                        <div class="progress">
+                                            <div class="progress-in" style="width:60%;"></div>
+                                            <div class="skill-percent">60%</div>
+                                        </div>
+                                    </div>
+                                    <div class="skills-item padd-15">
+                                        <h5>Power BI</h5>
+                                        <div class="progress">
+                                            <div class="progress-in" style="width:70%;"></div>
+                                            <div class="skill-percent">70%</div>
+                                        </div>
+                                    </div>
+                                    <div class="skills-item padd-15">
+                                        <h5>SQL</h5>
+                                        <div class="progress">
+                                            <div class="progress-in" style="width:80%;"></div>
+                                            <div class="skill-percent">80%</div>
+                                        </div>
+                                    </div>
+                                    <div class="skills-item padd-15">
+                                        <h5>Python</h5>
+                                        <div class="progress">
+                                            <div class="progress-in" style="width:70%;"></div>
+                                            <div class="skill-percent">70%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="education padd-15">
+                                <h3 class="title">Education</h3>
+                                <div class="row">
+                                    <div class="timeline-box">
+                                        <div class="timeline shadow-dark">
+                                            <!-- Timeline items here -->
+                                            <div class="timeline-item">
+                                                <div class="circle-dot"></div>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-calendar"></i>2019 - 2020
+                                                </h3>
+                                                <h4 class="timeline-title">SSC</h4>
+                                                <p class="timeline-text">Sarada English Medium High School</p>
+                                                <p class="timeline-percentage">Percentage : 98%</p>
+                                            </div>
+                                            <div class="timeline-item">
+                                                <div class="circle-dot"></div>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-calendar"></i>2020 - 2022
+                                                </h3>
+                                                <h4 class="timeline-title">Intermediate</h4>
+                                                <p class="timeline-text">Sasi Junior College</p>
+                                                <p class="timeline-percentage">Percentage : 81%</p>
+                                            </div>
+                                            <div class="timeline-item">
+                                                <div class="circle-dot"></div>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-calendar"></i>2022 - 2026
+                                                </h3>
+                                                <h4 class="timeline-title">Bachelors Of Technology</h4>
+                                                <p class="timeline-text">Malla Reddy University</p>
+                                                <p class="timeline-CGPA">CGPA : 7.89(till 5th semester)</p>
+                                            </div>
+                                            <!-- Add more timeline items -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="experience padd-15">
+                                <h3 class="title">Experience</h3>
+                                <div class="row">
+                                    <div class="timeline-box">
+                                        <div class="timeline shadow-dark">
+                                            <!-- Timeline items here -->
+                                            <div class="timeline-item">
+                                                <div class="circle-dot"></div>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-calendar"></i>2024 - 2024
+                                                </h3>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-clock"></i>1 -Month
+                                                </h3>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-time"></i>Sept 30 - Oct 31
+                                                </h3>
+                                                <h4 class="timeline-title">YBI Foundation</h4>
+                                                <p class="timeline-text">Data Science and Machine Learning Internship</p>
+                                                <p class="timeline-Project">Project : Movie Recommendation System</p>
+                                            </div>
+                                            <div class="timeline-item">
+                                                <div class="circle-dot"></div>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-calendar"></i>2024 - 2024
+                                                </h3>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-clock"></i>1 -Month
+                                                </h3>
+                                                <h3 class="timeline-date">
+                                                    <i class="fa fa-time"></i>Oct 30 - Nov 30
+                                                </h3>
+                                                <h4 class="timeline-title">Internship at Extion Infotech</h4>
+                                                <p class="timeline-text">Data Science</p>
+                                                <p class="timeline-percentage">Project : Stock Analysis</p>
+                                            </div>
+                                            
+                                            <!-- Add more timeline items -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- About Section End -->
+        <!-- Projects Section Start -->
+        <section class="projects section active" id="projects">
+            <div class="container">
+                <div class="row">
+                    <div class="section-title padd-15">
+                        <h2>Projects</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Project item Start -->
+                    <div class="project-item padd-15">
+                        <a href="https://colab.research.google.com/drive/1hFRefnD-Uvy35bldXVYuWQOLOzQ8TOeo?usp=sharing" class="project-link">
+                            <div class="project-item-inner">
+                                <div class="icon">
+                                    <i class="fa fa-film"></i>
+                                    <h4>Movie Recommendation System</h4>
+                                    <h6>Languages: Python DSA, Analysis, Visualisation</h6>
+                                    <h6>DataSet: Movie Recommendation dataSet(from kaggle)</h6>
+                                    <p>Combining user ratings, movie data, user interactions, social media insights, and knowledge graphs to deliver tailored movie suggestions. Enhances user satisfaction and discovery with diverse, engaging recommendations.</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="project-item padd-15">
+                        <a href="https://github.com/Nandu-ai2/MetaLearning-AutoML.git" class="project-link">
+                            <div class="project-item-inner">
+                                <div class="icon">
+                                    <i class="fas fa-chart-line"></i>
+                                    <h4>MetaLearning-AutoML</h4>
+                                    <h6>Languages: Python, DSA, Analysis, Visualisation</h6>
+                                    <h6>DataSet: MetaLearning-AutoML dataSet(from kaggle)</h6>
+                                    <p>This project explores the innovative field of Meta-Learning, focusing on developing systems that can learn how to learn. The goal is to create a robust framework capable of generalizing across various tasks, enabling rapid adaptation to new datasets with minimal fine-tuning.</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="project-item padd-15">
+                        <a href="https://github.com/Nandu-ai2/QuantumMed.git" class="project-link">
+                            <div class="project-item-inner">
+                                <div class="icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                    <h4>Quantum Med</h4>
+                                    <h6>Languages: Python</h6>
+                                    <h6>DataSet: Quantum Med dataSet(from kaggle)</h6>
+                                    <p>"Quantum-Enhanced Healthcare Diagnostics" Combining quantum computing with federated learning to enhance diagnostics. Uses quantum algorithms for medical data analysis while ensuring privacy through robust security measures, improving accuracy and personalized treatment plans.</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="project-item padd-15">
+                        <a href="#" class="project-link"> 
+                            <div class="project-item-inner">
+                                <div class="icon">
+                                    <i class="fa fa-user-clock"></i>
+                                    <h4>Online Attendance Management System</h4>
+                                    <h6>Languages: Html, css, JavaScript, Python, AWS</h6>
+                                    <h6>DataSet: Own</h6>
+                                    <p>Cloud-Based Attendance Management System on AWS Leverages AWS technologies like Lambda, DynamoDB, and API Gateway to automate attendance tracking. Offers real-time updates, scalability, and reliability, ideal for educational and corporate environments.</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="project-item padd-15">
+                        <a href="#" class="project-link"> 
+                            <div class="project-item-inner">
+                                <div class="icon">
+                                    <i class="fas fa-chart-line"></i>
+                                    <h4>Rice Production Analysis</h4>
+                                    <h6>Languages: Python, R, Data Visualization</h6>
+                                    <h6>DataSet: Rice Production Data</h6>
+                                    <p>Analyzing historical trends in global rice production from 1961 to 2021 and predicting future levels up to 2026. This project aims to ensure food security, economic stability, and sustainable agricultural practices.</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Services Section End -->
+
+        <!-- Portfolio Section Start -->
+        <section class="portfolio section active " id="portfolio">
+            <div class="container">
+                <div class="row">
+                    <div class="section-title padd-15">
+                        <h2 class="title-with-shape">Portfolio</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="porfolio-heading padd-15">
+                        <h2>My Certifications</h2>
+                        <p><a href="https://photos.app.goo.gl/e5u26kkojWU8WDCd7" style="text-decoration: underline;">Certificates</a></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Portfolio Item -->
+                    <div class="portfolio-item padd-15">
+                        <div class="portfolio-item-inner shadow-dark">
+                            <div class="portfolio-img">
+                                <img src="photos/Accenture (Data Analytics and Visualization Job Simulation).jpg" alt="Accenture Certificate">
+                                <div class="overlay">
+                                    <h4>Accenture Data Analytics</h4>
+                                    <p>Data Analytics and Visualization Job Simulation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Portfolio Item -->
+                    <div class="portfolio-item padd-15">
+                        <div class="portfolio-item-inner shadow-dark">
+                            <div class="portfolio-img">
+                                <img src="photos/AWS Academy.jpg" alt="AWS Academy Certificate">
+                                <div class="overlay">
+                                    <h4>AWS Academy</h4>
+                                    <p>AWS Cloud Foundations</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Portfolio Item (Coursera Certificates) -->
+                    
+                
+                    <!-- Portfolio Item -->
+                    <div class="portfolio-item padd-15">
+                        <div class="portfolio-item-inner shadow-dark">
+                            <div class="portfolio-img">
+                                <img src="photos/Data Science Internship (30days)_page-0001.jpg" alt="Data Science Internship">
+                                <div class="overlay">
+                                    <h4>Data Science Internship</h4>
+                                    <p>30-day Internship</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portfolio-item padd-15">
+                        <div class="portfolio-item-inner shadow-dark">
+                            <div class="portfolio-img">
+                                <h4>Coursera Certificates</h4>
+                                <div class="coursera-certs">
+                                    <img src="photos/Coursera Data Collection and Integration.jpg" alt="Coursera Certificate">
+                                    <img src="photos/Coursera fundamental Tools of Data Wrangling.jpg" alt="Coursera Certificate">
+                                    <img src="photos/Coursera Python Basics.jpg" alt="Coursera Certificate">
+                                    <img src="photos/Coursera Python Data Representations.jpg" alt="Coursera Certificate">
+                                    <img src="photos/Coursera Python Programming Essentials.jpg" alt="Coursera Certificate">
+                                </div>
+                                <div class="overlay">
+                                    <h4>Coursera Certificates</h4>
+                                    <p>Various Data Science and Python Certificates</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Portfolio Item -->
+                    <div class="portfolio-item padd-15">
+                        <div class="portfolio-item-inner shadow-dark">
+                            <div class="portfolio-img">
+                                <img src="photos/Data_Analytics_Essentials_Badge20240722-7-hzppw4_page-0001.jpg" alt="Data Analytics Essentials Badge">
+                                <div class="overlay">
+                                    <h4>Data Analytics Essentials</h4>
+                                    <p>Badge Certificate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Portfolio Item -->
+                    <div class="portfolio-item padd-15">
+                        <div class="portfolio-item-inner shadow-dark">
+                            <div class="portfolio-img">
+                                <img src="photos/K. R. S. S MANIKANTA  Certificate of Internship_page-0001.jpg" alt="Internship Certificate">
+                                <div class="overlay">
+                                    <h4>Internship Certificate</h4>
+                                    <p>Certificate of Internship</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Portfolio Item -->
+                    <div class="portfolio-item padd-15">
+                        <div class="portfolio-item-inner shadow-dark">
+                            <div class="portfolio-img">
+                                <img src="photos/python_basic certificate_page-0001.jpg" alt="Python Basic Certificate">
+                                <div class="overlay">
+                                    <h4>Python Basic</h4>
+                                    <p>Certificate of Completion</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Portfolio Item -->
+                    <div class="portfolio-item padd-15">
+                        <div class="portfolio-item-inner shadow-dark">
+                            <div class="portfolio-img">
+                                <img src="photos/tech_surf_certificate(ContentStack).jpg" alt="Tech Surf Certificate">
+                                <div class="overlay">
+                                    <h4>Tech Surf</h4>
+                                    <p>ContentStack Certificate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </section>
+        <!-- Portfolio Section End -->
+
+        <!-- Contact Section Start -->
+        <section class="contact section active" id="contact">
+            <div class="container">
+                <div class="section-title padd-15">
+                    <h2>Contact Me</h2>
+                </div>
+                <h3 class="contact-title">Ready to Bring Your Vision to Life?</h3>
+                <h4 class="contact-sub-title"style="text-align: center;">I'm Here to Answer Your Questions.</h4>
+                
+                <!-- Contact Info Grid -->
+                <div class="contact-info-container">
+                    <!-- Phone -->
+                    <div class="contact-info-item">
+                        <div class="icon">
+                            <i class="fa fa-phone"></i>
+                        </div>
+                        <h4>Call Us On</h4>
+                        <p>+91 6303666259</p>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="contact-info-item">
+                        <div class="icon">
+                            <i class="fa fa-envelope"></i>
+                        </div>
+                        <h4>Email</h4>
+                        <p>kesireddynandu004@gmail.com</p>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="contact-info-item">
+                        <div class="icon">
+                            <i class="fa fa-map-marker-alt"></i>
+                        </div>
+                        <h4>College</h4>
+                        <p>Malla Reddy University</p>
+                    </div>
+
+                    <!-- GitHub -->
+                    <a href="https://github.com/Nandu-ai2" target="_blank">
+                    <div class="contact-info-item">
+                        <div class="icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <h4>GitHub</h4>
+                        <p>View Projects</p>
+                    </div>
+                    </a>
+                    
+                    <!-- LinkedIn -->
+                    <a href="https://www.linkedin.com/in/krss-manikanta-060853297" target="_blank">
+                    <div class="contact-info-item">
+                        <div class="icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </div>
+                        <h4>LinkedIn</h4>
+                        <p>Connect with Me</p>
+                    </div>
+                    </a>
+
+                    <!-- HackerRank -->
+                    <a href="https://www.hackerrank.com/profile/kesireddynandu01" target="_blank">
+                    <div class="contact-info-item">
+                        <div class="icon">
+                            <i class="fab fa-hackerrank"></i>
+                        </div>
+                        <h4>HackerRank</h4>
+                        <p>View Profile</p>
+                    </div>
+                    </a>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form-container">
+                    <h3 class="contact-title">Connect with Me via Email</h3>
+                    <h4 class="contact-subtitle">I will give Fast and Personalized Response</h4>
+                    <form class="contact-form" action="https://formsubmit.co/kesireddynandu004@gmail.com" method="POST">
+                        <!-- Honeypot -->
+                        <input type="text" name="_honey" style="display: none;">
+                        
+                        <!-- Disable Captcha -->
+                        <input type="hidden" name="_captcha" value="false">
+                        
+                        <!-- Success Page -->
+                        <input type="hidden" name="_next" value="https://yourdomain.com/thanks.html">
+
+                        <div class="form-item">
+                            <input type="text" class="form-control" name="name" placeholder="Name" required>
+                        </div>
+                        <div class="form-item">
+                            <input type="email" class="form-control" name="email" placeholder="Email" required>
+                        </div>
+                        <div class="form-item">
+                            <input type="text" class="form-control" name="subject" placeholder="Subject" required>
+                        </div>
+                        <div class="form-item">
+                            <textarea class="form-control" name="message" placeholder="Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+        <!-- Contact Section End -->
+    </div>
+    <!-- Main Content End -->
+
+  
+
+    <!-- JS Files -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        // EmailJS Configuration
+        (function() {
+            emailjs.init("hVBrOi0Y9BfMN5Qxj");
+        })();
+    </script>
+    <script src="js/settings-panel.js"></script>
+</body>
+
+</html>
